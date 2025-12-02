@@ -1,0 +1,135 @@
+<?php // app/Views/pages/gerar_token.phtml ?>
+<div class="container-fluid">
+    <h2 class="mb-4">Gerar Novo Token</h2>
+
+    <?php if (isset($success) && $success): ?>
+        <div class="alert alert-success alert-dismissible fade show">
+            <?= $success ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($error) && $error): ?>
+        <div class="alert alert-danger alert-dismissible fade show">
+            <?= $error ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form action="<?= URL_BASE ?>/gerar-token/salvar" method="POST" autocomplete="off">
+                
+                <!-- Linha 1: Paciente e CPF -->
+                <div class="row">
+                    <div class="col-md-8 mb-3 position-relative">
+                        <label for="nome_paciente" class="form-label fw-bold">Nome do Paciente</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" id="nome_paciente" name="nome_paciente" 
+                                   required placeholder="Digite para buscar..." 
+                                   list="lista_pacientes">
+                            <datalist id="lista_pacientes"></datalist>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="cpf_paciente" class="form-label">CPF</label>
+                        <input type="text" class="form-control bg-light" id="cpf_paciente" name="cpf_paciente" readonly>
+                    </div>
+                </div>
+
+                <!-- Linha 2: Responsáveis (Automático) -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="nome_responsavel" class="form-label">Nome do Responsável</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="fas fa-user-friends"></i></span>
+                            <input type="text" class="form-control" id="nome_responsavel" name="nome_responsavel" placeholder="Preenchimento automático...">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="responsavel_financeiro" class="form-label">Responsável Financeiro</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="fas fa-file-invoice-dollar"></i></span>
+                            <input type="text" class="form-control" id="responsavel_financeiro" name="responsavel_financeiro" placeholder="Preenchimento automático...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Linha 3: Profissional -->
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="profissional_id" class="form-label fw-bold">Profissional / Médico</label>
+                        <select class="form-select" id="profissional_id" name="profissional_id" required>
+                            <option value="">Selecione...</option>
+                            <?php foreach ($profissionais as $prof): ?>
+                                <option value="<?= $prof['id'] ?>">
+                                    <?= htmlspecialchars($prof['profissional']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-check-circle me-1"></i> Gerar Token
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Script de Autocomplete Atualizado -->
+<script>
+    const inputNome = document.getElementById('nome_paciente');
+    const inputCpf = document.getElementById('cpf_paciente');
+    const inputResp = document.getElementById('nome_responsavel');
+    const inputFin = document.getElementById('responsavel_financeiro');
+    const datalist = document.getElementById('lista_pacientes');
+    let timeout = null;
+
+    inputNome.addEventListener('input', function() {
+        const termo = this.value;
+
+        clearTimeout(timeout);
+
+        // Preencher ao selecionar do datalist
+        const opcoes = datalist.options;
+        for (let i = 0; i < opcoes.length; i++) {
+            if (opcoes[i].value === termo) {
+                // Pega os dados extras dos atributos data-*
+                inputCpf.value = opcoes[i].getAttribute('data-cpf') || '';
+                inputResp.value = opcoes[i].getAttribute('data-resp') || '';
+                inputFin.value = opcoes[i].getAttribute('data-fin') || '';
+                return;
+            }
+        }
+
+        if (termo.length < 3) return;
+
+        timeout = setTimeout(() => {
+            fetch('<?= URL_BASE ?>/api/pacientes/busca?term=' + encodeURIComponent(termo))
+                .then(response => response.json())
+                .then(data => {
+                    datalist.innerHTML = ''; 
+                    data.forEach(p => {
+                        const option = document.createElement('option');
+                        option.value = p.nome;
+                        
+                        // Armazena dados extras
+                        option.setAttribute('data-cpf', p.cpf || '');
+                        option.setAttribute('data-resp', p.resp || ''); // Novo
+                        option.setAttribute('data-fin', p.fin || '');   // Novo
+                        
+                        const extra = p.cpf ? ` (CPF: ${p.cpf})` : '';
+                        option.label = p.origem === 'historico' ? `Histórico${extra}` : `Cadastrado${extra}`;
+                        datalist.appendChild(option);
+                    });
+                });
+        }, 300);
+    });
+</script>
