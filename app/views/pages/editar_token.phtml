@@ -1,0 +1,137 @@
+<?php // app/Views/pages/editar_token.phtml ?>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-gray-800">Editar Atendimento #<?= $token['token'] ?></h2>
+        <a href="<?= URL_BASE ?>/home" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Voltar
+        </a>
+    </div>
+
+    <?php if (isset($error) && $error): ?>
+        <div class="alert alert-danger"><?= $error ?></div>
+    <?php endif; ?>
+
+    <form action="<?= URL_BASE ?>/token/atualizar" method="POST" autocomplete="off">
+        <input type="hidden" name="id_token" value="<?= $token['id_token'] ?>">
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 fw-bold text-primary">Dados do Atendimento</h6>
+            </div>
+            <div class="card-body">
+                
+                <!-- IDENTIFICAÇÃO -->
+                <h6 class="text-muted mb-3 small text-uppercase fw-bold">1. Identificação</h6>
+                <div class="row">
+                    <div class="col-md-7 mb-3">
+                        <label class="form-label fw-bold">Paciente</label>
+                        <input type="text" class="form-control" name="nome_paciente" value="<?= htmlspecialchars($token['paciente']) ?>" required>
+                    </div>
+
+                    <div class="col-md-5 mb-3">
+                        <label class="form-label fw-bold">Profissional</label>
+                        <select class="form-select" name="profissional_id" required>
+                            <?php foreach ($profissionais as $prof): ?>
+                                <option value="<?= $prof['id'] ?>" <?= ($prof['id'] == $token['id_prof']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($prof['nome']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">CPF</label>
+                        <input type="text" class="form-control" name="cpf_paciente" value="<?= $token['cpf'] ?>">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Nome Responsável</label>
+                        <input type="text" class="form-control" name="nome_responsavel" value="<?= $token['nome_resp'] ?>">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Resp. Financeiro</label>
+                        <input type="text" class="form-control" name="responsavel_financeiro" value="<?= $token['responsavel_f'] ?>">
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- FINANCEIRO -->
+                <h6 class="text-muted mb-3 small text-uppercase fw-bold">2. Financeiro</h6>
+                
+                <!-- Linha 1: Valores e Datas -->
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold text-success">Valor (R$)</label>
+                        <input type="text" class="form-control fw-bold border-success" name="valor" id="valor" 
+                               value="<?= number_format($token['valorpag'], 2, ',', '.') ?>" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Vencimento</label>
+                        <input type="date" class="form-control" name="vencimento" value="<?= !empty($token['vencimento']) ? date('Y-m-d', strtotime($token['vencimento'])) : '' ?>">
+                    </div>
+                </div>
+
+                <!-- Linha 2: Detalhes do Pagamento (Novos Campos) -->
+                <div class="row">
+                    <!-- Modalidade (col-md-5) -->
+                    <div class="col-md-5 mb-5">
+                        <label class="form-label">Modalidade</label>
+                        <select class="form-select" name="modalidade">
+                            <option value="Avaliação T" <?= ($token['modalidadepag'] == 'Avaliação T') ? 'selected' : '' ?>>Avaliação Terapia (Psicologia / Terapia Casal / TO)</option>
+                            <option value="Avaliação F" <?= ($token['modalidadepag'] == 'Avaliação F') ? 'selected' : '' ?>>Avaliação Fono</option>
+                            <option value="Avaliação N" <?= ($token['modalidadepag'] == 'Avaliação N') ? 'selected' : '' ?>>Avaliação Neuropsicológica</option>
+                            <option value="Visita E" <?= ($token['modalidadepag'] == 'Visita E') ? 'selected' : '' ?>>Visita Escolar</option>
+                            <option value="Proase" <?= ($token['modalidadepag'] == 'Proase') ? 'selected' : '' ?>>Proase</option>
+                            <option value="Plano Mensal" <?= ($token['modalidadepag'] == 'Plano Mensal') ? 'selected' : '' ?>>Plano Mensal</option>
+                            <option value="Consulta Psiquiatra" <?= ($token['modalidadepag'] == 'Consulta Psiquiatra') ? 'selected' : '' ?>>Consulta Psiquiatra</option>
+                            <option value="Consulta Nutrição" <?= ($token['modalidadepag'] == 'Consulta Nutrição') ? 'selected' : '' ?>>Consulta Nutrição</option>
+                        </select>
+                    </div>
+
+                    <!-- Nome do Banco (col-md-4) -->
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">Nome do Banco</label>
+                        <select name="nome_banco" class="form-select">
+                            <option value="">Selecione...</option>
+                            <option value="Itau" <?= ($token['nome_banco'] == 'Itau') ? 'selected' : '' ?>>Banco Itau</option>
+                            <option value="Bradesco" <?= ($token['nome_banco'] == 'Bradesco') ? 'selected' : '' ?>>Banco Bradesco</option>
+                        </select>
+                    </div>
+
+                    <!-- Pagamento (col-md-3) -->
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Pagamento</label>
+                        <select class="form-select" name="formapag" required>
+                            <option value="Crédito" <?= ($token['formapag'] == 'Crédito') ? 'selected' : '' ?>>Crédito</option>
+                            <option value="Débito" <?= ($token['formapag'] == 'Débito') ? 'selected' : '' ?>>Débito</option>
+                            <option value="Espécie" <?= ($token['formapag'] == 'Espécie') ? 'selected' : '' ?>>Espécie</option>
+                            <option value="Pix" <?= ($token['formapag'] == 'Pix') ? 'selected' : '' ?>>Pix</option>
+                            <option value="Pix / Qrcode" <?= ($token['formapag'] == 'Pix / Qrcode') ? 'selected' : '' ?>>Pix / Qrcode</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <a href="<?= URL_BASE ?>/home" class="btn btn-light border me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fas fa-save me-1"></i> Salvar Alterações
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Máscara de Moeda
+    document.getElementById('valor').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        value = (value / 100).toFixed(2) + '';
+        value = value.replace(".", ",");
+        value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+        e.target.value = value;
+    });
+</script>

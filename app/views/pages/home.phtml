@@ -1,0 +1,118 @@
+<?php // app/views/pages/home.phtml 
+?>
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+        <div>
+            <h1 class="h3 text-gray-800">Controle de Recebimentos</h1>
+            <p class="text-muted mb-0">Gerencie os atendimentos registrados.</p>
+        </div>
+        <div>
+            <a href="<?= URL_BASE ?>/gerar-token" class="btn btn-primary shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50 me-2"></i>Novo Atendimento
+            </a>
+        </div>
+    </div>
+
+    <!-- MENSAGENS DE NOTIFICAÇÃO (ADICIONADO) -->
+    <!-- Este bloco verifica se o Controller enviou alguma mensagem de sucesso -->
+    <?php if (isset($_SESSION['flash_success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fas fa-check-circle me-2"></i> <?= $_SESSION['flash_success'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <?php unset($_SESSION['flash_success']); // Limpa a mensagem após exibir 
+        ?>
+    <?php endif; ?>
+
+    <!-- Este bloco verifica se houve erro -->
+    <?php if (isset($_SESSION['flash_error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i> <?= $_SESSION['flash_error'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <?php unset($_SESSION['flash_error']); ?>
+    <?php endif; ?>
+    <!-- FIM DAS MENSAGENS -->
+
+    <!-- Tabela de Controle -->
+    <div class="card shadow mb-4 border-0">
+        <div class="card-header py-3 bg-white border-bottom">
+            <h6 class="m-0 fw-bold text-primary">
+                <i class="fas fa-table me-1"></i> Lançamentos Recentes
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <!-- Adicionado data-order na tabela para garantir ordem inicial -->
+                <table class="table table-hover table-striped align-middle" id="tabelaPagamentos" width="100%">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="5%">ID</th>
+                            <th width="10%">Data registro</th>
+                            <th width="10%">Vencimento</th>
+                            <th>Paciente</th>
+                            <th width="15%">Profissional</th>
+                            <th width="15%">Valor</th>
+                            <th width="10%" class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($atendimentos)): ?>
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    Nenhum registro encontrado.
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($atendimentos as $item): ?>
+                                <tr>
+                                    <td class="fw-bold text-secondary"><?= $item['token'] ?></td>
+
+                                    <!-- CORREÇÃO AQUI: data-order para ordenação correta -->
+                                    <td data-order="<?= date('Y-m-d H:i:s', strtotime($item['data_registro'])) ?>">
+                                        <?= date('d/m/Y', strtotime($item['data_registro'])) ?>
+                                    </td>
+
+
+                                    <!-- Data Vencimento (Verifica se existe antes de exibir) -->
+                                    <td class="text-danger fw-bold">
+                                        <?php if (!empty($item['vencimento'])): ?>
+                                            <?= date('d/m/Y', strtotime($item['vencimento'])) ?>
+                                        <?php else: ?>
+                                            -
+                                        <?php endif; ?>
+                                    </td>
+
+                                    <td>
+                                        <div class="fw-bold"><?= htmlspecialchars($item['paciente']) ?></div>
+                                        <small class="text-muted"><?= $item['cpf'] ?? '' ?></small>
+                                    </td>
+                                    <td><?= htmlspecialchars($item['nome_profissional'] ?? '-') ?></td>
+
+                                    <td class="fw-bold text-dark">
+                                        R$ <?= number_format($item['valorpag'] ?? 0, 2, ',', '.') ?>
+                                        <div class="small text-muted fw-normal">
+                                            <?= htmlspecialchars($item['formapag'] ?? '') ?>
+                                        </div>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="<?= URL_BASE ?>/token/editar?id=<?= $item['id_token'] ?>" class="btn btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            <a href="<?= URL_BASE ?>/token/imprimir?id=<?= $item['id_token'] ?>" target="_blank" class="btn btn-outline-dark" title="Imprimir Recibo">
+                                                <i class="fas fa-print"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
