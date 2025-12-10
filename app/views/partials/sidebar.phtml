@@ -1,0 +1,43 @@
+<?php // app/Views/partials/sidebar.phtml ?>
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-white shadow-sm" style="width: 220px; min-height: 100vh;">
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="<?= URL_BASE ?>/home" class="nav-link link-dark">
+                <i class="fas fa-home me-2"></i> Início
+            </a>
+        </li>
+        <li>
+            <a href="<?= URL_BASE ?>/gerar-token" class="nav-link link-dark">
+                <i class="fas fa-ticket-alt me-2"></i> Gerar Token
+            </a>
+        </li>
+        <li>
+            <a href="<?= URL_BASE ?>/meus-tokens" class="nav-link link-dark">
+                <i class="fas fa-list me-2"></i> Histórico
+            </a>
+        </li>
+
+        <!-- SEÇÃO PACIENTES -->
+        <li class="nav-item mt-3">
+            <span class="ps-3 text-uppercase small text-muted fw-bold">Cadastros</span>
+        </li>
+        <li>
+            <a href="<?= URL_BASE ?>/pacientes/cadastrar" class="nav-link link-dark">
+                <i class="fas fa-user-plus me-2"></i> Novo Paciente
+            </a>
+        </li>
+        
+        <li class="nav-item mt-3">
+            <span class="ps-3 text-uppercase small text-muted fw-bold">Atendimento</span>
+        </li>
+        <li>
+            <a href="<?= URL_BASE ?>/painel-atendimento" class="nav-link link-dark">
+                <i class="fas fa-user-md me-2"></i> Painel Médico
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <div class="text-center text-muted small">
+        &copy; 2026 Controle
+    </div>
+</div>
