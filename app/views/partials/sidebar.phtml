@@ -1,0 +1,76 @@
+<?php // app/views/partials/sidebar.phtml ?>
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?= URL_BASE ?>/home">
+        <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-notes-medical"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">Clínica <sup>Assista</sup></div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item">
+        <a class="nav-link" href="<?= URL_BASE ?>/home">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading: RELATÓRIOS (Antes era Atendimento) -->
+    <div class="sidebar-heading">
+        RELATÓRIOS
+    </div>
+
+    <!-- Nav Item - Novo Atendimento -->
+    <li class="nav-item">
+        <a class="nav-link" href="<?= URL_BASE ?>/gerar-token">
+            <i class="fas fa-fw fa-plus-circle"></i>
+            <span>Novo Atendimento</span></a>
+    </li>
+
+    <!-- Nav Item - Meus Tokens -->
+    <li class="nav-item">
+        <a class="nav-link" href="<?= URL_BASE ?>/meus-tokens">
+            <i class="fas fa-fw fa-list-alt"></i>
+            <span>Histórico Tokens</span></a>
+    </li>
+
+    <!-- Nav Item - Painel Médico (REMOVIDO conforme solicitado) -->
+    <!-- 
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-fw fa-user-md"></i>
+            <span>Painel Médico</span></a>
+    </li> 
+    -->
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Pacientes
+    </div>
+
+    <!-- Nav Item - Cadastro -->
+    <li class="nav-item">
+        <a class="nav-link" href="<?= URL_BASE ?>/pacientes/cadastrar">
+            <i class="fas fa-fw fa-user-plus"></i>
+            <span>Cadastrar Paciente</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+
+</ul>
